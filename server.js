@@ -20,7 +20,7 @@ db.connect(err => {
     console.error("Database connection error:", err);
     return;
   }
-  console.log("✅ Connected to MySQL");
+  console.log("Connected to MySQL");
 });
 
 // POST /api/register
@@ -58,5 +58,5 @@ app.post("/api/login-auth", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("✅ Server running on http://localhost:3000");
+  console.log("Server running on http://localhost:3000");
 });
