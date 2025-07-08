@@ -4,9 +4,25 @@ const mysql = require("mysql2");
 const bodyParser = require("body-parser");
 
 const app = express();
-app.use(cors());
+
+// Set up proper CORS handling
+app.use(cors({
+  origin: "*", // You can set this to your HubSpot domain for better security
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
+
 app.use(bodyParser.json());
 
+// Manually handle OPTIONS preflight requests (optional but safe fallback)
+app.options("*", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.sendStatus(200);
+});
+
+// MySQL DB connection
 const db = mysql.createConnection({
   host: 'sql12.freesqldatabase.com',
   user: 'sql12788074',
@@ -23,7 +39,7 @@ db.connect(err => {
   console.log("Connected to MySQL");
 });
 
-// POST /api/register
+// Register endpoint
 app.post("/api/register", (req, res) => {
   const { email, password } = req.body;
 
@@ -41,14 +57,16 @@ app.post("/api/register", (req, res) => {
   });
 });
 
-// Optional: Login API
+// Login endpoint
 app.post("/api/login-auth", (req, res) => {
   const { email, password } = req.body;
+
   const sql = "SELECT * FROM users WHERE email = ? AND password = ?";
   db.query(sql, [email, password], (err, results) => {
     if (err) {
       return res.status(500).json({ success: false });
     }
+
     if (results.length > 0) {
       return res.json({ success: true });
     } else {
@@ -57,6 +75,8 @@ app.post("/api/login-auth", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
