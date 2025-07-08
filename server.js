@@ -7,7 +7,7 @@ const app = express();
 
 // Set up proper CORS handling
 app.use(cors({
-  origin: "*", // You can set this to your HubSpot domain for better security
+  origin: "https://hubspot-login-api.onrender.com",
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
@@ -76,6 +76,10 @@ app.post("/api/login-auth", (req, res) => {
 });
 
 // Start server
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
